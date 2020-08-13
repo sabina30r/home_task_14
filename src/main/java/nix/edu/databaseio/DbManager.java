@@ -1,8 +1,7 @@
-package nix.edu.databaseIO;
+package nix.edu.databaseio;
 
 import nix.edu.algorithm.data.Edge;
 import nix.edu.algorithm.data.Node;
-import nix.edu.connection.DbConnectionUtil;
 import nix.edu.model.Location;
 import nix.edu.model.Problem;
 import nix.edu.model.Route;
@@ -16,9 +15,14 @@ import java.util.List;
 
 
 public class DbManager {
-    private static Connection connection = DbConnectionUtil.getConnection();
 
-    public static List<Node> readLocations() {
+    private Connection connection;
+
+    public DbManager(Connection connection) {
+        this.connection = connection;
+    }
+
+    public List<Node> readLocations() {
         List<Node> locationsList = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement("SELECT id, name FROM locations;")) {
             ResultSet resultSet = statement.executeQuery();
@@ -35,7 +39,7 @@ public class DbManager {
         return locationsList;
     }
 
-    public static List<Edge> readRoutes(List<Node> locations) {
+    public List<Edge> readRoutes(List<Node> locations) {
         List<Edge> edges = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement("SELECT id, from_id, to_id, cost  FROM routes;")) {
             ResultSet resultSet = statement.executeQuery();
@@ -54,7 +58,7 @@ public class DbManager {
         return edges;
     }
 
-    public static List<Problem> readProblems() {
+    public List<Problem> readProblems() {
         List<Problem> problems = new ArrayList<>();
         try (PreparedStatement statement = connection.
                 prepareStatement("SELECT id, from_id, to_id FROM problems " +
@@ -73,7 +77,7 @@ public class DbManager {
         return problems;
     }
 
-    public static Node getNode(List<Node> locationsList, int id) {
+    public Node getNode(List<Node> locationsList, int id) {
         for (Node node : locationsList) {
             if (Integer.valueOf(node.getId()).equals(id)) {
                 return node;
@@ -82,7 +86,7 @@ public class DbManager {
         return null;
     }
 
-    public static void writeData(int id, int cost) {
+    public void writeData(int id, int cost) {
         try (PreparedStatement statement = connection.
                 prepareStatement("INSERT INTO solutions (problem_id, cost) VALUES (?,?);")) {
             statement.setLong(1, id);
