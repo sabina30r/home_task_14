@@ -89,10 +89,9 @@ public class DbManager {
     public void writeData(int id, int cost) {
         try (PreparedStatement statement = connection.
                 prepareStatement("INSERT INTO solutions (problem_id, cost) VALUES (?,?);")) {
-            statement.setLong(1, id);
-            statement.setLong(2, cost);
-            statement.addBatch();
-            statement.executeBatch();
+            statement.setInt(1, id);
+            statement.setInt(2, cost);
+            statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
